@@ -164,12 +164,12 @@ public class movement : MonoBehaviour
             StartCoroutine(cooldowns());
             on_cooldown = true;
             GetComponent<CharacterController2D>().onDash = true;
-            if (cursorcheck.position.x < 0)
+            if (cursorcheck.localPosition.x < 0)
             {
                horizontalmove = -DashForce;
                 dash = true;
             }
-            else if (cursorcheck.position.x > 0)
+            else if (cursorcheck.localPosition.x > 0)
             {
                horizontalmove = DashForce;
                 dash = true;
@@ -181,5 +181,16 @@ public class movement : MonoBehaviour
     {
         yield return new WaitForSeconds(cooldown);
         on_cooldown = false;
+    }
+
+    public void EnterTheDoor()
+    {
+        onEvent = true;
+        StartCoroutine(transisionTime());
+    }
+    IEnumerator transisionTime()
+    {
+        yield return new WaitForSeconds(1.5f);
+        onEvent = false;
     }
 }
