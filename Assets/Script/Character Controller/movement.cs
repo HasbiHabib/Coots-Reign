@@ -6,6 +6,7 @@ public class movement : MonoBehaviour
 {
     [Header("movement setting")]
     public CharacterController2D controller;
+    public gamemaster _GM;
     public float normalrun;
     public float lari;
     float horizontalmove;
@@ -57,7 +58,7 @@ public class movement : MonoBehaviour
 
         direction.Normalize();
 
-            if (onEvent == false)
+            if (onEvent == false && _GM.onthing == false)
             {
             if (controller.m_Grounded)
             {
@@ -86,9 +87,12 @@ public class movement : MonoBehaviour
                     tembak();
                 }
             }
-             
-         
             }
+        else
+        {
+            horizontalmove = 0;
+            character.SetFloat("jalan", 0);
+        }
 
 
 
@@ -140,7 +144,6 @@ public class movement : MonoBehaviour
     public void respawn()
     {
         this.transform.position = checkpoint.transform.position;
-        FindObjectOfType<playerstats>().gothits(2,0,0);	
     }
 
     IEnumerator despawn()
