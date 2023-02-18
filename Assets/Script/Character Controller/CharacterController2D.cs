@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class CharacterController2D : MonoBehaviour
 {
 	[SerializeField] private float m_JumpForce = 400f;							// Amount of force added when the player jumps.
-	[SerializeField] private float m_slamForce = 400f;							// Amount of force added when the player slam.	
+	[SerializeField] private float m_DashForce = 400f;							// Amount of force added when the player slam.	
 	[SerializeField] private float m_Speedup = .36f;			// Amount of maxSpeed applied to crouching movement. 1 = 100%
 	[Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;	// How much to smooth out the movement
 	[SerializeField] private bool m_AirControl = false;							// Whether or not a player can steer while jumping;
@@ -22,7 +22,7 @@ public class CharacterController2D : MonoBehaviour
 	public bool m_midair;            // Whether or not the player is midair.
 	const float k_CeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
 	private Rigidbody2D m_Rigidbody2D;
-	private bool m_FacingRight = true;  // For determining which way the player is currently facing.
+	public bool m_FacingRight = true;  // For determining which way the player is currently facing.
 	private Vector3 m_Velocity = Vector3.zero;
 
 	[Header("Events")]
@@ -39,6 +39,9 @@ public class CharacterController2D : MonoBehaviour
 	public float moves;
 	public Transform attackcheck;
 	public GameObject dust;
+	public Animator player;
+
+	public bool onDash = false;
 
 	private void Awake()
 	{
@@ -88,12 +91,18 @@ public class CharacterController2D : MonoBehaviour
 				if (!wasGrounded)
 				//Instantiate(dust, m_GroundCheck.position, m_GroundCheck.rotation);
 					OnLandEvent.Invoke();
+				if(onDash == true)
+				{
+					player.Play("land");
+					onDash = false;
+
+                }
 			}
 		}
 	}
 
 
-	public void Move(float move, bool crouch, bool jump, bool slam, bool speedup)
+	public void Move(float move, bool crouch, bool jump, bool slam, bool speedup,bool dash)
 	{
 		// If crouching, check to see if the character can stand up
 		if (!crouch)
@@ -105,13 +114,13 @@ public class CharacterController2D : MonoBehaviour
 			}
 		}
 
-		if(m_midair && slam)
+		if (dash)
 		{
-			m_Rigidbody2D.AddForce(new Vector2(0f, m_slamForce));
-		}
+            m_Rigidbody2D.AddForce(new Vector2(0f, m_DashForce));
+        }
 
-		//only control the player if grounded or airControl is turned on
-		if (m_Grounded || m_AirControl)
+        //only control the player if grounded or airControl is turned on
+        if (m_Grounded || m_AirControl)
 		{
 
 			if(speedup)

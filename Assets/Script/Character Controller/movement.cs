@@ -8,13 +8,13 @@ public class movement : MonoBehaviour
     public CharacterController2D controller;
     public float normalrun;
     public float lari;
-    [Range(0, 1f)][SerializeField] public float jalanspeed;
     float horizontalmove;
 
     [Header("condition_thing")]
     public bool onEvent;
     private bool jump;
     private bool slam;
+    private bool dash;
 
 
     [Header("other component")]
@@ -24,31 +24,71 @@ public class movement : MonoBehaviour
     public Transform checkpoint;
     public float waktuspawn;
 
+    [Header("Dash component")]
+    public float cooldown;
+    public float DashForce;
+    public Transform thecamera;
+
+    public Transform cursorcheck;
+    private Vector3 target1;
+    private Vector3 difference;
+    private Vector2 direction;
+    private float rotationZ;
+    private float distance;
+    private bool on_cooldown;
+
+    public Animator players;
+    public Camera cam;
+
+    void Awake()
+    {
+        on_cooldown = false;
+    }
+
     void Update()
     {
-                if (onEvent == false)
-                {
+        target1 = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -transform.position.z));
 
-            if (Input.GetKey(KeyCode.LeftShift)) 
+        difference = target1 - transform.position;
+        cursorcheck.position = difference + thecamera.position;
+        rotationZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
+        distance = difference.magnitude;
+        direction = difference / distance;
+
+        direction.Normalize();
+
+            if (onEvent == false)
             {
-                horizontalmove = Input.GetAxis("Horizontal") * lari;
-                character.SetFloat("jalan", Mathf.Abs(horizontalmove));
-            }
-            else 
+            if (controller.m_Grounded)
             {
-                horizontalmove = Input.GetAxis("Horizontal") * normalrun;
-                character.SetFloat("jalan", Mathf.Abs(horizontalmove));
-            }
-                            if (controller.m_midair == false)
-                            {
-                                if (Input.GetButtonDown("Jump"))
-                                {
-                                    jump = true;
-                                }
-                            }
-             
-            
+                if (Input.GetKey(KeyCode.LeftShift))
+                {
+                    horizontalmove = Input.GetAxis("Horizontal") * lari;
+                    character.SetFloat("jalan", Mathf.Abs(horizontalmove));
                 }
+                else
+                {
+                    horizontalmove = Input.GetAxis("Horizontal") * normalrun;
+                    character.SetFloat("jalan", Mathf.Abs(horizontalmove));
+                }
+                if (controller.m_midair == false)
+                {
+                    if (Input.GetButtonDown("Jump"))
+                    {
+                        jump = true;
+                    }
+                }
+            }
+            else
+            {
+                if (Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    tembak();
+                }
+            }
+             
+         
+            }
 
 
 
@@ -82,9 +122,10 @@ public class movement : MonoBehaviour
 
     void FixedUpdate()
     {
-    	controller.Move(horizontalmove * Time.fixedDeltaTime , false, jump, slam, false);
+    	controller.Move(horizontalmove * Time.fixedDeltaTime , false, jump, slam, false, dash);
     	jump = false;
     	slam = false;
+        dash = false;
     }
 
     void  OnTriggerEnter2D(Collider2D other)
@@ -114,4 +155,31 @@ public class movement : MonoBehaviour
         onEvent = false;
     }
 
+
+    public void tembak()
+    {
+        if (on_cooldown == false)
+        {
+            players.Play("dash");
+            StartCoroutine(cooldowns());
+            on_cooldown = true;
+            GetComponent<CharacterController2D>().onDash = true;
+            if (cursorcheck.position.x < 0)
+            {
+               horizontalmove = -DashForce;
+                dash = true;
+            }
+            else if (cursorcheck.position.x > 0)
+            {
+               horizontalmove = DashForce;
+                dash = true;
+            }
+        }
+    }
+
+    IEnumerator cooldowns()
+    {
+        yield return new WaitForSeconds(cooldown);
+        on_cooldown = false;
+    }
 }

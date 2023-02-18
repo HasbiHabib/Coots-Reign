@@ -241,7 +241,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 7.8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -268,7 +268,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2037805960}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -434,13 +435,18 @@ MonoBehaviour:
   controller: {fileID: 847087549}
   normalrun: 12
   lari: 25
-  jalanspeed: 0.7
   onEvent: 0
   character: {fileID: 684933836}
   rigid: {fileID: 847087547}
   kakinya: {fileID: 1137851138}
   checkpoint: {fileID: 0}
   waktuspawn: 0.3
+  cooldown: 1
+  DashForce: 50
+  thecamera: {fileID: 519420032}
+  cursorcheck: {fileID: 2037805960}
+  players: {fileID: 684933836}
+  cam: {fileID: 519420031}
 --- !u!114 &847087549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -454,10 +460,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_JumpForce: 400
-  m_slamForce: 400
+  m_DashForce: -200
   m_Speedup: 0.36
   m_MovementSmoothing: 0
-  m_AirControl: 0
+  m_AirControl: 1
   m_WhatIsGround:
     serializedVersion: 2
     m_Bits: 128
@@ -466,6 +472,7 @@ MonoBehaviour:
   firstland: 1
   m_Grounded: 0
   m_midair: 0
+  m_FacingRight: 1
   OnLandEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -478,6 +485,8 @@ MonoBehaviour:
   moves: 0
   attackcheck: {fileID: 1978909484}
   dust: {fileID: 0}
+  player: {fileID: 684933836}
+  onDash: 0
 --- !u!4 &847087552
 Transform:
   m_ObjectHideFlags: 0
@@ -678,8 +687,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1415585015}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0585, y: -4.1982, z: 0}
-  m_LocalScale: {x: 16.234104, y: 0.9623774, z: 1}
+  m_LocalPosition: {x: 0.058498, y: -4.1982, z: 0}
+  m_LocalScale: {x: 104.10119, y: 0.9623774, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -792,6 +801,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 491536198}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2037805959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2037805960}
+  m_Layer: 0
+  m_Name: cursor check
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2037805960
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2037805959}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 519420032}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &192994274820215972
 SpriteRenderer:
