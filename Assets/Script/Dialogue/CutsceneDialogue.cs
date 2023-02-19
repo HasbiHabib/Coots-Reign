@@ -1,10 +1,10 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-public class dialogue : MonoBehaviour
+public class CutsceneDialogue : MonoBehaviour
 {
     // script utama dalam sistem dialogue
 
@@ -19,12 +19,12 @@ public class dialogue : MonoBehaviour
 
     // efektor script
     public bool npcface;                              // memilih NPC yang berbicara
-    
+
     // float script
     public float textspeed;                           // kecepatan mengisi text
 
     // script ekstender / scdript pihak kedua
-   
+
     private Queue<string> sentences;                  // text yang dibicarakan NPC
     private Queue<string> kalimat;                    // dlm bahasa indonesia
     private Queue<Sprite> wajah;
@@ -34,7 +34,7 @@ public class dialogue : MonoBehaviour
     private string kalimah;
     private string sentence;
 
-    public dialoguemanager dialogmanager;
+    public Cutscenetrigger cutScenedialogue;
 
     public gamemaster _GM;
     public GameObject thedialogbar;
@@ -43,8 +43,6 @@ public class dialogue : MonoBehaviour
 
     public bool english = true;
     public bool indonesia;
-
-    public Animator thedialogbars;
 
     void Start()
     {
@@ -55,32 +53,43 @@ public class dialogue : MonoBehaviour
         kalimat = new Queue<string>();
         sound = new Queue<string>();
     }
+    void Update()
+    {
+        if (ondialogue == true)
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                DisplayNextSentence2();
+            }
+        }
+    }
 
 
-    public void StartDialogue(dialoguemanager dialog)
+
+    public void StartCutsceneDialogue(Cutscenetrigger dialog)
     {
         thedialogbar.SetActive(true);
         _GM.onthing = true;
         ondialogue = true;
-        
+
         // bahasa ingris 
-        if(english == true)
+        if (english == true)
         {
-           sentences.Clear();
-           foreach (string sentence in dialog.sentences)
-           {
-               sentences.Enqueue(sentence);
-           }
+            sentences.Clear();
+            foreach (string sentence in dialog.sentences)
+            {
+                sentences.Enqueue(sentence);
+            }
         }
-        
+
         // bahasa indonesia
-        if(indonesia == true)
+        if (indonesia == true)
         {
-           kalimat.Clear();
-           foreach (string kalimah in dialog.kalimat)
-           {
-               kalimat.Enqueue(kalimah);
-           }
+            kalimat.Clear();
+            foreach (string kalimah in dialog.kalimat)
+            {
+                kalimat.Enqueue(kalimah);
+            }
         }
 
 
@@ -90,55 +99,53 @@ public class dialogue : MonoBehaviour
             wajah.Enqueue(wajahi);
         }
         sound.Clear();
-        foreach(string suaras in dialog.thesound)
+        foreach (string suaras in dialog.thesound)
         {
             sound.Enqueue(suaras);
         }
 
         nama.Clear();
-        foreach(string namas in dialog.nama)
+        foreach (string namas in dialog.nama)
         {
             nama.Enqueue(namas);
         }
-        dialogmanager = dialog.dialogmanager;
+        cutScenedialogue = dialog.dialogmanager;
 
-        DisplayNextSentence();
+        DisplayNextSentence2();
         // jika NPC yang berbicara
     }
-
-    public void DisplayNextSentence()
+    public void DisplayNextSentence2()
     {
-        thedialogbars.SetTrigger("pop");
         // text dialogue selanjutnya
         if (english == true)
         {
-        if(sentences.Count == 0)
-        {
-            EndDialogue();
-            return;
-        }
+            if (sentences.Count == 0)
+            {
+                EndDialogue2();
+                return;
+            }
         }
 
-        if(indonesia == true)
+        if (indonesia == true)
         {
-        if(kalimat.Count == 0)
-        {
-            EndDialogue();
-            return;
+            if (kalimat.Count == 0)
+            {
+                EndDialogue2();
+                return;
+            }
         }
-        }
-        
+
         // bahasa ingris
-        if(english == true)
+        if (english == true)
         {
-        sentence = sentences.Dequeue();
-        dialogtext.text = sentence;
+            sentence = sentences.Dequeue();
+            dialogtext.text = sentence;
         }
 
-        if(indonesia == true)
+        if (indonesia == true)
         {
-        kalimah = kalimat.Dequeue();
-        dialogtext.text = kalimah;
+            kalimah = kalimat.Dequeue();
+            dialogtext.text = kalimah;
         }
 
         Sprite wajahi = wajah.Dequeue();
@@ -153,17 +160,33 @@ public class dialogue : MonoBehaviour
 
         StopAllCoroutines();
 
-        if(english == true)
+        if (english == true)
         {
-            StartCoroutine(Typesentence(sentence)); 
-        }     
-        if(indonesia == true)
+            StartCoroutine(Typesentence(sentence));
+        }
+        if (indonesia == true)
         {
-            StartCoroutine(menuliskalimah(kalimah)); 
-        }  
+            StartCoroutine(menuliskalimah(kalimah));
+        }
+    }
+    void EndDialogue2()
+    {
+        // dialogue berakhir
+        nama.Clear();
+        sentences.Clear();
+        kalimat.Clear();
+        wajah.Clear();
+        dialogtext.text = "";
+        namaini.text = "";
+        wajahini.sprite = empty;
+
+        thedialogbar.SetActive(false);
+        _GM.onthing = false;
+        ondialogue = false;
+        cutScenedialogue.dialogselesai.Invoke();
     }
 
-    IEnumerator Typesentence (string sentence)
+    IEnumerator Typesentence(string sentence)
     {
         // agar text diisi perlahan
         dialogtext.text = "";
@@ -174,7 +197,7 @@ public class dialogue : MonoBehaviour
         }
     }
 
-    IEnumerator menuliskalimah (string kalimah)
+    IEnumerator menuliskalimah(string kalimah)
     {
         // agar text diisi perlahan
         dialogtext.text = "";
@@ -182,34 +205,8 @@ public class dialogue : MonoBehaviour
         {
             dialogtext.text += letter;
             yield return new WaitForSecondsRealtime(textspeed);
-        }
-    }
 
-    void EndDialogue()
-    {
-        // dialogue berakhir
-        nama.Clear();
-        sentences.Clear();
-        kalimat.Clear();
-        wajah.Clear();
-        dialogtext.text = "";
-        namaini.text = "";
-        wajahini.sprite = empty;
-        
-        thedialogbar.SetActive(false);
-        _GM.onthing = false;
-        ondialogue = false;
-        dialogmanager.dialogselesai.Invoke();
-    }
 
-    void Update()
-    {
-    	if(ondialogue == true)
-    	{
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                DisplayNextSentence();
-    	    }
         }
     }
 }

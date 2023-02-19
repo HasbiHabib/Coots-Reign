@@ -5,18 +5,19 @@ using UnityEngine.UI;
 public class playerstats : MonoBehaviour
 {
     [Header("TheStats")]
-    public float HP = 6;
-    public float HPmax = 6;
+    public int HP = 6;
+    public int HPmax = 6;
     [Header("otherComponent")]
     public movement move;
+    private bool onCooldown = false;
+    public float cooldownTime;
 
     [Header("visual component")]
     public Animator lowhealth;
     public Animator anima;
-    public Animator cameras;
     public GameObject bloodpartikel;
     public Transform tempatkeluardarah;
-    public Animator gameover;
+    public GameObject gameover;
     private bool alive = false;
 
     // Update is called once per frame
@@ -24,6 +25,7 @@ public class playerstats : MonoBehaviour
     void Start()
     {
         Physics2D.IgnoreLayerCollision(10, 9);
+        HP = HPmax;
     }
 
     void Update()
@@ -46,7 +48,7 @@ public class playerstats : MonoBehaviour
         {
         	if(alive == true)
         	{
-        		gameover.SetTrigger("mulai");
+                gameover.SetActive(true);
         		alive = false;
         	}
         }
@@ -59,5 +61,27 @@ public class playerstats : MonoBehaviour
     public void gothits()
     {
         HP = HP - 1;
+        FindObjectOfType<playerStatsUI>().Lifecheck();
+        anima.Play("gothit");
+        lowhealth.SetTrigger("damage");
+        onCooldown = true;
+        StartCoroutine(cooldowns());
+    }
+
+    IEnumerator cooldowns()
+    {
+        yield return new WaitForSeconds(cooldownTime);
+        onCooldown = false;
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!onCooldown)
+        {
+            if (other.tag == "enemyattack")
+            {
+                gothits();
+            }
+        }
     }
 }
