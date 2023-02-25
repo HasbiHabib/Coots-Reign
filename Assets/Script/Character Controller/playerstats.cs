@@ -35,7 +35,7 @@ public class playerstats : MonoBehaviour
         {
         	alive = true;
         }
-        if(HP <= 3)
+        if(HP <= 1)
         {
             lowhealth.SetBool("danger",true);
         }
@@ -61,8 +61,9 @@ public class playerstats : MonoBehaviour
     public void gothits()
     {
         HP = HP - 1;
+        FindObjectOfType<soundmanager>().Play("cootsGH");
         FindObjectOfType<playerStatsUI>().Lifecheck();
-        anima.Play("gothit");
+        anima.SetTrigger("gothit");
         lowhealth.SetTrigger("damage");
         onCooldown = true;
         StartCoroutine(cooldowns());

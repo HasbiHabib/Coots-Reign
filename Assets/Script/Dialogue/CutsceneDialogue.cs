@@ -60,6 +60,7 @@ public class CutsceneDialogue : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E))
             {
                 DisplayNextSentence2();
+                FindObjectOfType<soundmanager>().Play("button1");
             }
         }
     }

@@ -7,6 +7,8 @@ public class Talktrigger : MonoBehaviour
 {
     private bool cantalk;
     public bool autoopen;
+    public bool cannotopentwice;
+    private bool first = true;
 
     public UnityEvent talk;
     public gamemaster GM_;
@@ -29,10 +31,24 @@ public class Talktrigger : MonoBehaviour
             }
             else 
             {
-                cantalk = false;
-                FindObjectOfType<doornotice>().untalks();
-                GM_.onthing = true;
-                talk.Invoke();
+                if (!cannotopentwice)
+                {
+                    cantalk = false;
+                    FindObjectOfType<doornotice>().untalks();
+                    GM_.onthing = true;
+                    talk.Invoke();
+                }
+                else 
+                {
+                    if (first) 
+                    {
+                        cantalk = false;
+                        FindObjectOfType<doornotice>().untalks();
+                        GM_.onthing = true;
+                        talk.Invoke();
+                        first = false;
+                    }
+                }
             }
         }
     }
@@ -55,10 +71,24 @@ public class Talktrigger : MonoBehaviour
                 {
                     if (Input.GetKeyDown(KeyCode.E))
                     {
-                        cantalk = false;
-                        FindObjectOfType<doornotice>().untalks();
-                        GM_.onthing = true;
-                        talk.Invoke();
+                        if (!cannotopentwice)
+                        {
+                            cantalk = false;
+                            FindObjectOfType<doornotice>().untalks();
+                            GM_.onthing = true;
+                            talk.Invoke();
+                        }
+                        else 
+                        {
+                            if (first)
+                            {
+                                cantalk = false;
+                                FindObjectOfType<doornotice>().untalks();
+                                GM_.onthing = true;
+                                talk.Invoke();
+                                first = false;
+                            }
+                        }
                     }
                 }
             }

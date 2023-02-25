@@ -209,7 +209,8 @@ public class dialogue : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E))
             {
                 DisplayNextSentence();
-    	    }
+                FindObjectOfType<soundmanager>().Play("button2");
+            }
         }
     }
 }

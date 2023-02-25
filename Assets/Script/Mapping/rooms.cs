@@ -15,7 +15,7 @@ public class rooms : MonoBehaviour
     public Animator transition;
     public gamemaster GM_;
     public Transform players;
-    private float waktutransisi = 1f;
+    public float waktutransisi = 1f;
 
     void Start()
     {
@@ -52,7 +52,9 @@ public class rooms : MonoBehaviour
     			transition.SetTrigger("out");
                 GM_.ontransition = true;
     			StartCoroutine(masuk());
+                FindObjectOfType<soundmanager>().Play("door");
                 canenter = false;
+
     		}
     	}
         }
@@ -68,6 +70,6 @@ public class rooms : MonoBehaviour
         players.transform.position = pintu_yang_dituju.thisdoor.transform.position;
     	transition.SetTrigger("in");
         FindObjectOfType<movement>().EnterTheDoor();
-        GM_.ontransition = false;
+        GM_.StartTheFalse(waktutransisi);
     }
 }

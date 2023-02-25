@@ -20,4 +20,14 @@ public class gamemaster : MonoBehaviour
         Time.timeScale = 0;
         paused = true;
      }
+    public void StartTheFalse(float waktutransisi) 
+    {
+        StartCoroutine(TransitionControl(waktutransisi));
+    }
+
+    IEnumerator TransitionControl(float waktutransisi) 
+    {
+        yield return new WaitForSecondsRealtime(waktutransisi);
+        ontransition = false;
+    }
 }

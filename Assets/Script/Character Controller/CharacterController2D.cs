@@ -89,12 +89,15 @@ public class CharacterController2D : MonoBehaviour
 			{
 				m_Grounded = true;
 				if (!wasGrounded)
-				//Instantiate(dust, m_GroundCheck.position, m_GroundCheck.rotation);
+				{
+					FindObjectOfType<soundmanager>().Play("jump");
+					Instantiate(dust, m_GroundCheck.position, m_GroundCheck.rotation);
 					OnLandEvent.Invoke();
+				}
 				if(onDash == true)
 				{
 					player.Play("land");
-					onDash = false;
+                    onDash = false;
 
                 }
 			}
@@ -117,6 +120,8 @@ public class CharacterController2D : MonoBehaviour
 		if (dash)
 		{
             m_Rigidbody2D.AddForce(new Vector2(0f, m_DashForce));
+            FindObjectOfType<soundmanager>().Play("dash");
+            Instantiate(dust, m_GroundCheck.position, m_GroundCheck.rotation);
         }
 
         //only control the player if grounded or airControl is turned on
@@ -166,7 +171,8 @@ public class CharacterController2D : MonoBehaviour
 			// Add a vertical force to the player.
 			m_Grounded = false;
 			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
-			//Instantiate(dust, m_GroundCheck.position, m_GroundCheck.rotation);
+            FindObjectOfType<soundmanager>().Play("jump");
+            Instantiate(dust, m_GroundCheck.position, m_GroundCheck.rotation);
 		}
 	}
 

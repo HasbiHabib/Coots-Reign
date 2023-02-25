@@ -41,6 +41,8 @@ public class movement : MonoBehaviour
     public Animator players;
     public Camera cam;
 
+    public bool canDashing = false;
+
     void Awake()
     {
         on_cooldown = false;
@@ -82,7 +84,7 @@ public class movement : MonoBehaviour
             }
             else
             {
-                if (Input.GetKeyDown(KeyCode.Mouse0))
+                if (Input.GetKeyDown(KeyCode.Mouse0) && canDashing)
                 {
                     tembak();
                 }
@@ -195,5 +197,10 @@ public class movement : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
         onEvent = false;
+    }
+
+    public void EnableDashing() 
+    {
+        canDashing = true;
     }
 }
